@@ -25,7 +25,7 @@ for item in shopinglist.unchecked:
 listText = "\n".join(list_items)
 
 output_data = {
-  "message": listText
+  "message": listText if listText else "No items in the shopping list.",
 }
 
 # To get a JSON formatted string
