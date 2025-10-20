@@ -9,7 +9,9 @@ load_dotenv()
 master_token = os.getenv('MASTER_TOKEN')
 
 keep = gkeepapi.Keep()
-device_id = f"2811a82c0609"
+device_id = "2811a82c0609"
+
+print("KEY_MAKE_APIKEY:", os.getenv('X_MAKE_APIKEY'))
 
 print(f"Using device_id: {device_id}")
 print("Authenticating with Google Keep...")
@@ -38,6 +40,7 @@ output_json_string = json.dumps(output_data, indent=2, ensure_ascii=False)
 
 # Send data to webhook
 url = 'https://hook.eu2.make.com/sqw6pylxxeszpdohu7fsv5cqu5jpmoln'
+
 headers = {
     'x-make-apikey': os.getenv('X_MAKE_APIKEY'),
     'Content-Type': 'application/json'
