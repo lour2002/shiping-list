@@ -13,7 +13,6 @@ device_id = f"2811a82c0609"
 
 print(f"Using device_id: {device_id}")
 print("Authenticating with Google Keep...")
-print("Master Token:", master_token)
 
 keep.authenticate('borisdiaw12@gmail.com', master_token, None, None, device_id)
 
