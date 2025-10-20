@@ -4,14 +4,18 @@ import requests
 import os
 from dotenv import load_dotenv
 
+# Load .env file only if it exists (for local development)
 load_dotenv()
 
 master_token = os.getenv('MASTER_TOKEN')
+x_make_apikey = os.getenv('X_MAKE_APIKEY')
+
+# Debug: Check if environment variables are loaded
+print("MASTER_TOKEN:", "✓ Loaded" if master_token else "✗ Missing")
+print("X_MAKE_APIKEY:", "✓ Loaded" if x_make_apikey else "✗ Missing")
 
 keep = gkeepapi.Keep()
 device_id = "2811a82c0609"
-
-print("KEY_MAKE_APIKEY:", os.getenv('X_MAKE_APIKEY'))
 
 print(f"Using device_id: {device_id}")
 print("Authenticating with Google Keep...")
@@ -42,7 +46,7 @@ output_json_string = json.dumps(output_data, indent=2, ensure_ascii=False)
 url = 'https://hook.eu2.make.com/sqw6pylxxeszpdohu7fsv5cqu5jpmoln'
 
 headers = {
-    'x-make-apikey': os.getenv('X_MAKE_APIKEY'),
+    'x-make-apikey': x_make_apikey,
     'Content-Type': 'application/json'
 }
 
@@ -53,7 +57,7 @@ try:
     print(response.text)
 
     # Clear the shopping list by checking all items
-    for item in shopinglist.unchecked:
+    for item in shoppinglist.unchecked:
         item.delete()
     keep.sync()
     print("Shopping list cleared.")
