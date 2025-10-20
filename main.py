@@ -3,13 +3,15 @@ import json
 import requests
 import os
 from dotenv import load_dotenv
+from uuid import getnode as get_mac
 
 load_dotenv()
 
 master_token = os.getenv('MASTER_TOKEN')
 
 keep = gkeepapi.Keep()
-keep.authenticate('borisdiaw12@gmail.com', master_token)
+device_id = "2811a82c0609"
+keep.authenticate('borisdiaw12@gmail.com', master_token, None, None, device_id)
 
 keep.sync()
 shopinglist = keep.get('1NopFGnUhEvmKthvjAlqejRUL_xQXHEsNU0mSQEaLn5ijfukEQowKdzQ1wjTZ1Q')
