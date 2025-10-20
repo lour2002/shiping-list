@@ -32,4 +32,5 @@ jobs:
         python main.py
       env:
         MASTER_TOKEN: ${{ secrets.MASTER_TOKEN }}
-        X_MAKE_APIKEY: ${{ secrets.X_MAKE_APIKEY }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

@@ -1,18 +1,21 @@
 import gkeepapi
-import json
-import requests
 import os
+import asyncio
 from dotenv import load_dotenv
+from telegram import Bot
+from telegram.constants import ParseMode
 
 # Load .env file only if it exists (for local development)
 load_dotenv()
 
 master_token = os.getenv('MASTER_TOKEN')
-x_make_apikey = os.getenv('X_MAKE_APIKEY')
+telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
+telegram_chat_id = os.getenv('TELEGRAM_CHAT_ID')
 
 # Debug: Check if environment variables are loaded
 print("MASTER_TOKEN:", "✓ Loaded" if master_token else "✗ Missing")
-print("X_MAKE_APIKEY:", "✓ Loaded" if x_make_apikey else "✗ Missing")
+print("TELEGRAM_BOT_TOKEN:", "✓ Loaded" if telegram_bot_token else "✗ Missing")
+print("TELEGRAM_CHAT_ID:", "✓ Loaded" if telegram_chat_id else "✗ Missing")
 
 keep = gkeepapi.Keep()
 device_id = "2811a82c0609"
@@ -27,39 +30,40 @@ shoppinglist = keep.get('1NopFGnUhEvmKthvjAlqejRUL_xQXHEsNU0mSQEaLn5ijfukEQowKdz
 
 list_items = []
 for item in shoppinglist.unchecked:
-    # Using unchecked box as per the example.
-    # To handle checked items, you could use:
-    # checkbox = "☑" if item.checked else "☐"
-    checkbox = "☐"
-    list_items.append(f"{checkbox} {item.text}")
+    list_items.append(f"☐ {item.text}")
 
-listText = "\n".join(list_items)
+if not list_items:
+    message = "📝 Список покупок пуст"
+else:
+    message = "🛒 *Список покупок:*\n\n" + "\n".join(list_items)
 
-output_data = {
-  "message": listText if listText else "No items in the shopping list.",
-}
+print(f"\nПодготовлено сообщение:\n{message}\n")
 
-# To get a JSON formatted string
-output_json_string = json.dumps(output_data, indent=2, ensure_ascii=False)
 
-# Send data to webhook
-url = 'https://hook.eu2.make.com/sqw6pylxxeszpdohu7fsv5cqu5jpmoln'
+async def send_telegram_message():
+    """Отправка сообщения в Telegram"""
+    bot = Bot(token=telegram_bot_token)
+    try:
+        await bot.send_message(
+            chat_id=telegram_chat_id,
+            text=message,
+            parse_mode=ParseMode.MARKDOWN
+        )
+        print("✓ Сообщение успешно отправлено в Telegram")
+        return True
+    except Exception as e:
+        print(f"✗ Ошибка отправки в Telegram: {e}")
+        return False
 
-headers = {
-    'x-make-apikey': x_make_apikey,
-    'Content-Type': 'application/json'
-}
 
-try:
-    response = requests.post(url, headers=headers, data=output_json_string.encode('utf-8'))
-    response.raise_for_status()  # Raise an exception for bad status codes
-    print(f"Webhook response: {response.status_code}")
-    print(response.text)
+# Отправка сообщения
+success = asyncio.run(send_telegram_message())
 
-    # Clear the shopping list by checking all items
+if success:
+    # Очищаем список покупок только если сообщение успешно отправлено
     for item in shoppinglist.unchecked:
         item.delete()
     keep.sync()
-    print("Shopping list cleared.")
-except requests.exceptions.RequestException as e:
-    print(f"Error sending data to webhook: {e}")
+    print("✓ Список покупок очищен")
+else:
+    print("✗ Список не был очищен из-за ошибки отправки")
