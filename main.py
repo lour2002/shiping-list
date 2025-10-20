@@ -3,21 +3,25 @@ import json
 import requests
 import os
 from dotenv import load_dotenv
-from uuid import getnode as get_mac
 
 load_dotenv()
 
 master_token = os.getenv('MASTER_TOKEN')
 
 keep = gkeepapi.Keep()
-device_id = "2811a82c0609"
+device_id = f"2811a82c0609"
+
+print(f"Using device_id: {device_id}")
+print("Authenticating with Google Keep...")
+print("Master Token:", master_token)
+
 keep.authenticate('borisdiaw12@gmail.com', master_token, None, None, device_id)
 
 keep.sync()
-shopinglist = keep.get('1NopFGnUhEvmKthvjAlqejRUL_xQXHEsNU0mSQEaLn5ijfukEQowKdzQ1wjTZ1Q')
+shoppinglist = keep.get('1NopFGnUhEvmKthvjAlqejRUL_xQXHEsNU0mSQEaLn5ijfukEQowKdzQ1wjTZ1Q')
 
 list_items = []
-for item in shopinglist.unchecked:
+for item in shoppinglist.unchecked:
     # Using unchecked box as per the example.
     # To handle checked items, you could use:
     # checkbox = "☑" if item.checked else "☐"
