@@ -11,6 +11,7 @@ load_dotenv()
 master_token = os.getenv('MASTER_TOKEN')
 telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
 telegram_chat_id = os.getenv('TELEGRAM_CHAT_ID')
+telegram_chat_thread_id = 2
 
 # Debug: Check if environment variables are loaded
 print("MASTER_TOKEN:", "✓ Loaded" if master_token else "✗ Missing")
@@ -47,7 +48,8 @@ async def send_telegram_message():
         await bot.send_message(
             chat_id=telegram_chat_id,
             text=message,
-            parse_mode=ParseMode.MARKDOWN
+            parse_mode=ParseMode.MARKDOWN,
+            message_thread_id=telegram_chat_thread_id
         )
         print("✓ Сообщение успешно отправлено в Telegram")
         return True
